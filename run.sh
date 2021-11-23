@@ -1,7 +1,7 @@
 #!/bin/bash
 
 ###################### HEAD ########################
-wallet=""
+name="TheBoyz"
 version="1.2.4.1" 
 ####################################################
 
@@ -53,13 +53,17 @@ function highlight () {
 
 # -- start setup --
 center "🦅"; sleep 1
-highlight 'Start ...' 'w' 'setup'
+highlight 'Start ...' 'w' 'setup' && 
+installPath="$HOME/$name"
+highlight "Setup directory at $installPath ..." 'y' 'setup' &&
+mkdir $installPath && cd $installPath &&
 
 
 # -- download the miner --
 highlight 'Download miner ...' 'y' 'miner'
 pkg="cpuminer-gr-$version-x86_64_linux.tar.gz"
 wget "https://github.com/WyvernTKC/cpuminer-gr-avx2/releases/download/$version/$pkg" &&
+minerPath=$installPath"/"${pkg#".tar.gz"}"/cpuminer.sh"
 highlight 'Decompress ...' 'y' 'miner'
 tar -xvzf $pkg
 wait
@@ -68,4 +72,28 @@ highlight 'Done.' 'g' 'miner'
 
 
 # -- service --
-highlight 'Activate the watchdog? This will keep the miner alive in the background even after reboot. [y/n]'
+highlight 'Activate the watchdog? This will keep the miner alive in the background even after reboot. [y/n]' 'y' 'watchdog'
+read i 
+if [ $i == 'y' ]; then
+    highlight 'Setting up daemon in system service ...' 'y' 'watchdog'
+    # custom daemon service
+    cat >/tmp/$name.service <<EOL
+  [Unit]
+Description=Dirty Mike
+[Service]
+ExecStart=$installPath --config=$InstDIR/c3pool/config.json
+Restart=always
+Nice=8
+CPUWeight=1
+[Install]
+WantedBy=multi-user.target
+EOL
+    sudo mv /tmp/$name.service /etc/systemd/system/$name.service
+    sudo systemctl enable $name.service
+    sudo systemctl start $name.service
+    highlight 'Done.' 'g' 'watchdog'
+else
+    highlight 'Skipping watchdog.' 'w' 'setup'
+fi
+
+highlight 'Finished.' 'w' 'setup'
