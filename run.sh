@@ -5,8 +5,6 @@ name="TheBoyz"
 version="1.2.4.1" 
 ####################################################
 
-
-
 function center() {
     row=0
     echo ""
