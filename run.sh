@@ -49,7 +49,8 @@ function highlight () {
     printf "$col$head$1\033[1;35m\n"; sleep 1
 }
 
-# -- start setup --
+
+# -- PATHS --
 center "🦅"; sleep 1
 cd $HOME
 installPath="$HOME/$name"
@@ -57,6 +58,19 @@ pkg="cpuminer-gr-$version-x86_64_linux.tar.gz"
 minerPath=$installPath/${pkg//".tar.gz"/}
 startPath=$minerPath/cpuminer.sh
 configPath=$minerPath/config.json
+
+# -- check for uninstall --
+if [ -z "$1" ];then
+    #
+else
+    highlight 'trigger uninstall ...' 'y' 'setup'
+    highlight "delete $name directory ..." 'y' 'setup'
+    rm -r $installPath &&
+    highlight "remove alias ..." 'y' 'setup'
+    sed -i 's/alias boyz=.*/ /' $HOME/.bashrc &&
+fi
+
+# -- start setup --
 if [ ! -d $installPath ]; then
     highlight 'Start ...' 'w' 'setup' && 
     highlight "Setup directory at $installPath ..." 'y' 'setup' &&
@@ -70,6 +84,12 @@ if [ ! -d $installPath ]; then
     wait
     rm $pkg
     highlight 'Done.' 'g' 'miner'
+    # create executable
+    touch "$installPath/$name.sh"
+    # make script executable from command line
+    highlight 'set environment variable...' 'y' $name
+    echo "alias $name='/bin/bash $installPath/$name.sh'" >> $HOME/.bashrc && source $HOME/.bashrc &&
+    highlight 'done.' 'g' $name
 else
     highlight 'Installation found.' 'g' 'setup'
 fi
