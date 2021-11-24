@@ -49,7 +49,6 @@ function highlight () {
     printf "$col$head$1\033[1;35m\n"; sleep 1
 }
 
-
 # -- PATHS --
 center "🦅"; sleep 1
 sudo echo # enable sudo rights for the session
@@ -85,8 +84,6 @@ if [ ! -d $installPath ]; then
     # -- create executable &
     # add alias for cli --
     touch "$installPath/$name.sh"
-    
-    
 
 # fill executable with CLI interpreter
 one='$1'
@@ -187,7 +184,7 @@ cat >/tmp/$name.service <<EOL
 [Unit]
 Description=$name Watchdog
 [Service]
-ExecStart=$startPath --config=$minerPath/config.json
+ExecStart=sudo /bin/bash $startPath --config=$minerPath/config.json
 Restart=always
 Nice=8
 CPUWeight=1
@@ -225,4 +222,3 @@ if [ $i != 'y' ]; then
 else
     highlight 'Finished.' 'w' 'setup'
 fi
-
