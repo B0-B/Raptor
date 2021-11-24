@@ -77,13 +77,16 @@ if [ ! -d $installPath ]; then
     # add alias for cli
     touch "$installPath/$name.sh"
 
+# fill executable with CLI interpreter
 one='$1'
 two='$2'
 three='$3'
+I='$i'
+killString='kill $(awk -F" "  "{print $two}"  <<<"$(ps -aux | grep cpuminer-)") || highlight "no mining process found, check for watchdog..." "y" $name && sudo systemctl stop $name.service'
 cat > $installPath/$name.sh <<EOF
 #!/bin/bash
 function highlight () {
-    if [ $one == 'r' ];then
+    if [ $two == 'r' ];then
         col="\033[1;31m"
     elif [ $two == 'y' ]; then
         col="\033[1;33m"
@@ -116,7 +119,7 @@ else
             highlight 'trigger uninstall ...' 'y' 'setup'
             highlight "are you sure to uninstall $name? [y/n]" 'y' 'setup'
             read i
-            if [ $i == "y" ];then
+            if [ $I == "y" ];then
                 highlight "delete $name directory ..." 'y' 'setup'
                 rm -r $installPath &&
                 highlight "remove alias ..." 'y' 'setup'
@@ -132,16 +135,14 @@ else
         highlight 'Invoke mining workload ...' '\033[0;33m' 'miner'
         sudo /bin/bash $startPath
     elif [ "kill" == $one ]; then
-        highlight 'Invoke mining workload ...' '\033[0;33m' 'miner'
-        systemctl stop $name.service || kill $(awk -F" "  '{print $two}'  <<<"$(ps -aux | grep cpuminer-)")
-        sudo /bin/bash $startPath
+        highlight 'kill miner ...' '\033[0;33m' $name
+        sudo systemctl stop $name.service
+        sudo pkill cpuminer
     elif [ "watchdog" == $one ]; then
         highlight 'Invoke watchdog, miner will run in the background.' '\033[1;34m' 'watchdog'
-        sudo /bin/bash $startPath
-    else
-        highlight "Command '$one' not found." 'r'
+        highlight 'Setting up daemon in system service ...' 'y' 'watchdog'
+        sudo systemctl start $name.service
     fi
-    return
 fi
 EOF
 
@@ -165,13 +166,10 @@ sed -i 's/  "user".*/ "user": "'$wallet'.'$worker'",/' $configPath &&
 highlight 'Done.' 'g' 'config'
 
 # -- service --
-highlight 'Activate the watchdog? This will keep the miner alive and will run in the background even after reboot. No console output. [y/n]' 'y' 'watchdog'
-read i 
-if [ $i == 'y' ]; then
-    highlight 'Setting up daemon in system service ...' 'y' 'watchdog'
-    # custom daemon service
-    cat >/tmp/$name.service <<EOL
-  [Unit]
+highlight 'Setting up daemon in system service ...' 'y' 'watchdog'
+# custom daemon service
+cat >/tmp/$name.service <<EOL
+[Unit]
 Description=$name Watchdog
 [Service]
 ExecStart=$minerPath --config=$minerPath/config.json
@@ -181,10 +179,15 @@ CPUWeight=1
 [Install]
 WantedBy=multi-user.target
 EOL
-    sudo mv /tmp/$name.service /etc/systemd/system/$name.service
-    sudo systemctl enable $name.service
+sudo mv /tmp/$name.service /etc/systemd/system/$name.service
+sudo systemctl enable $name.service
+highlight 'Done.' 'g' 'watchdog'
+highlight 'Activate the watchdog? This will keep the miner alive and will run in the background even after reboot. No console output. [y/n]' 'y' 'watchdog'
+read i 
+if [ $i == 'y' ]; then
+    highlight 'Invoke watchdog, miner will run in the background.' '\033[1;34m' 'watchdog'
     sudo systemctl start $name.service
-    highlight 'Done.' 'g' 'watchdog'
+    return
 else
     highlight 'Skipping watchdog.' 'w' 'setup'
 fi
