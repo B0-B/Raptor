@@ -53,25 +53,28 @@ function highlight () {
 
 # -- start setup --
 center "🦅"; sleep 1
-highlight 'Start ...' 'w' 'setup' && 
+cd $HOME
 installPath="$HOME/$name"
-highlight "Setup directory at $installPath ..." 'y' 'setup' &&
-mkdir $installPath && cd $installPath &&
-
-
-# -- download the miner --
-highlight 'Download miner ...' 'y' 'miner'
 pkg="cpuminer-gr-$version-x86_64_linux.tar.gz"
-wget "https://github.com/WyvernTKC/cpuminer-gr-avx2/releases/download/$version/$pkg" &&
 minerPath=$installPath/${pkg//".tar.gz"/}
 startPath=$minerPath/cpuminer.sh
 configPath=$minerPath/config.json
-highlight 'Decompress ...' 'y' 'miner'
-tar -xvzf $pkg
-wait
-rm $pkg
-highlight 'Done.' 'g' 'miner'
-
+if [ ! -d $installPath ]; then
+    highlight 'Start ...' 'w' 'setup' && 
+    highlight "Setup directory at $installPath ..." 'y' 'setup' &&
+    mkdir $installPath &&
+    cd $installPath
+    sleep 1
+    highlight 'Download miner ...' 'y' 'miner'
+    wget "https://github.com/WyvernTKC/cpuminer-gr-avx2/releases/download/$version/$pkg" &&
+    highlight 'Decompress ...' 'y' 'miner'
+    tar -xvzf $pkg
+    wait
+    rm $pkg
+    highlight 'Done.' 'g' 'miner'
+else
+    highlight 'Installation found.' 'g' 'setup'
+fi
 
 highlight 'Continue with direct configuration? [y/n]' 'y' 'setup'
 read i 
@@ -83,7 +86,7 @@ highlight 'Paste [CTRL+SHIFT+V] a valid Raptoreum wallet address and press enter
 read wallet
 highlight 'Insert a worker name and press enter:' 'y' 'config'
 read worker
-sed -i '10s/user.*/ "user": "'$wallet'.'$worker'",' $configPath &&
+sed -i 's/  "user".*/ "user": "'$wallet'.'$worker'",/' $configPath &&
 
 # -- service --
 highlight 'Activate the watchdog? This will keep the miner alive and will run in the background even after reboot. No console output. [y/n]' 'y' 'watchdog'
@@ -119,10 +122,10 @@ fi
 # -- ask to start miner if daemon is skipped --
 if [ $i != 'y' ]; then
     highlight 'Start the miner in this console? [y/n]' 'y' 'miner'
-    highlight 'Invoke mining workload ...' '\033[0;33m' 'miner'
     read i 
-    if [ $i != 'y' ]; then
-        /bin/bash $startPath
+    if [ $i == 'y' ]; then
+        highlight 'Invoke mining workload ...' '\033[0;33m' 'miner'
+        sudo /bin/bash $startPath
     else
         highlight 'Finished.' 'w' 'setup'
     fi
