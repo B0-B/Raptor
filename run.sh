@@ -63,11 +63,23 @@ configPath=$minerPath/config.json
 if [ -z "$1" ];then
     #
 else
-    highlight 'trigger uninstall ...' 'y' 'setup'
-    highlight "delete $name directory ..." 'y' 'setup'
-    rm -r $installPath &&
-    highlight "remove alias ..." 'y' 'setup'
-    sed -i 's/alias boyz=.*/ /' $HOME/.bashrc &&
+    if [ "uninstall" == "$1" ]; then
+        if [ -d $installPath ]; then
+            highlight 'trigger uninstall ...' 'y' 'setup'
+            highlight "are you sure to uninstall $name? [y/n]" 'y' 'setup'
+            read i
+            highlight "delete $name directory ..." 'y' 'setup'
+            rm -r $installPath &&
+            highlight "remove alias ..." 'y' 'setup'
+            sed -i 's/alias boyz=.*/ /' $HOME/.bashrc &&
+            highlight "removed $name from the system." 'g' 'setup'
+            return
+        else
+            highlight "No $name installation found on this profile - exit." 'r' 'setup'
+        fi
+    else
+        highlight "Command '$1' not found." 'r'
+    fi
 fi
 
 # -- start setup --
@@ -84,9 +96,9 @@ if [ ! -d $installPath ]; then
     wait
     rm $pkg
     highlight 'Done.' 'g' 'miner'
-    # create executable
+    # create executable &
+    # add alias for cli
     touch "$installPath/$name.sh"
-    # make script executable from command line
     highlight 'set environment variable...' 'y' $name
     echo "alias $name='/bin/bash $installPath/$name.sh'" >> $HOME/.bashrc && source $HOME/.bashrc &&
     highlight 'done.' 'g' $name
