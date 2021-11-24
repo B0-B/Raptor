@@ -74,11 +74,10 @@ else
     highlight 'Installation found.' 'g' 'setup'
 fi
 
+# -- configure --
 highlight 'Continue with direct configuration? [y/n]' 'y' 'setup'
 read i 
 if [ $i == 'y' ]; then
-
-# -- configure --
 highlight '...' 'y' 'config'
 highlight 'Paste [CTRL+SHIFT+V] a valid Raptoreum wallet address and press enter:' 'y' 'config'
 read wallet
@@ -111,11 +110,10 @@ else
     highlight 'Skipping watchdog.' 'w' 'setup'
 fi
 
+# -- Hook if service is declined --
 else
-
     highlight "Skipping configuration. The miner can be configured manually in $minerPath/config.json." 'w' 'setup'
 fi
-
 
 # -- ask to start miner if daemon is skipped --
 if [ $i != 'y' ]; then
