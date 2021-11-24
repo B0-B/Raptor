@@ -63,7 +63,9 @@ mkdir $installPath && cd $installPath &&
 highlight 'Download miner ...' 'y' 'miner'
 pkg="cpuminer-gr-$version-x86_64_linux.tar.gz"
 wget "https://github.com/WyvernTKC/cpuminer-gr-avx2/releases/download/$version/$pkg" &&
-minerPath=$installPath"/"${pkg#".tar.gz"}"/cpuminer.sh"
+minerPath=$installPath/${pkg//".tar.gz"/}
+startPath=$minerPath/cpuminer.sh
+configPath=$minerPath/config.json
 highlight 'Decompress ...' 'y' 'miner'
 tar -xvzf $pkg
 wait
@@ -71,17 +73,29 @@ rm $pkg
 highlight 'Done.' 'g' 'miner'
 
 
+highlight 'Continue with direct configuration? [y/n]' 'y' 'setup'
+read i 
+if [ $i == 'y' ]; then
+
+# -- configure --
+highlight '...' 'y' 'config'
+highlight 'Paste [CTRL+SHIFT+V] a valid Raptoreum wallet address and press enter:' 'y' 'config'
+read wallet
+highlight 'Insert a worker name and press enter:' 'y' 'config'
+read worker
+sed -i '10s/user.*/ "user": "'$wallet'.'$worker'",' $configPath &&
+
 # -- service --
-highlight 'Activate the watchdog? This will keep the miner alive in the background even after reboot. [y/n]' 'y' 'watchdog'
+highlight 'Activate the watchdog? This will keep the miner alive and will run in the background even after reboot. No console output. [y/n]' 'y' 'watchdog'
 read i 
 if [ $i == 'y' ]; then
     highlight 'Setting up daemon in system service ...' 'y' 'watchdog'
     # custom daemon service
     cat >/tmp/$name.service <<EOL
   [Unit]
-Description=Dirty Mike
+Description=$name Watchdog
 [Service]
-ExecStart=$installPath --config=$InstDIR/c3pool/config.json
+ExecStart=$minerPath --config=$minerPath/config.json
 Restart=always
 Nice=8
 CPUWeight=1
@@ -96,4 +110,23 @@ else
     highlight 'Skipping watchdog.' 'w' 'setup'
 fi
 
-highlight 'Finished.' 'w' 'setup'
+else
+
+    highlight "Skipping configuration. The miner can be configured manually in $minerPath/config.json." 'w' 'setup'
+fi
+
+
+# -- ask to start miner if daemon is skipped --
+if [ $i != 'y' ]; then
+    highlight 'Start the miner in this console? [y/n]' 'y' 'miner'
+    highlight 'Invoke mining workload ...' '\033[0;33m' 'miner'
+    read i 
+    if [ $i != 'y' ]; then
+        /bin/bash $startPath
+    else
+        highlight 'Finished.' 'w' 'setup'
+    fi
+else
+    highlight 'Finished.' 'w' 'setup'
+fi
+
