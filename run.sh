@@ -62,6 +62,7 @@ configPath=$minerPath/config.json
 
 # -- start setup --
 if [ ! -d $installPath ]; then
+    
     highlight 'Start ...' 'w' 'setup' && 
     highlight "Setup directory at $installPath ..." 'y' 'setup' &&
     mkdir $installPath &&
@@ -74,9 +75,18 @@ if [ ! -d $installPath ]; then
     wait
     rm $pkg
     highlight 'Done.' 'g' 'miner'
-    # create executable &
-    # add alias for cli
+    
+    # -- dependencies --
+    highlight 'Install dependencies ...' 'y' 'dependencies'
+    sudo apt install curl -y
+    wait
+    highlight 'Done.' 'g' 'dependencies'
+    
+    # -- create executable &
+    # add alias for cli --
     touch "$installPath/$name.sh"
+    
+    
 
 # fill executable with CLI interpreter
 one='$1'
