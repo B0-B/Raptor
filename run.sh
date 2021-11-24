@@ -1,5 +1,5 @@
 #!/bin/bash
-
+# Raptoreum setup and deploy script with CLI.
 ###################### HEAD ########################
 name="TheBoyz"
 version="1.2.4.1" 
@@ -59,6 +59,52 @@ minerPath=$installPath/${pkg//".tar.gz"/}
 startPath=$minerPath/cpuminer.sh
 configPath=$minerPath/config.json
 
+# -- start setup --
+if [ ! -d $installPath ]; then
+    highlight 'Start ...' 'w' 'setup' && 
+    highlight "Setup directory at $installPath ..." 'y' 'setup' &&
+    mkdir $installPath &&
+    cd $installPath
+    sleep 1
+    highlight 'Download miner ...' 'y' 'miner'
+    wget "https://github.com/WyvernTKC/cpuminer-gr-avx2/releases/download/$version/$pkg" &&
+    highlight 'Decompress ...' 'y' 'miner'
+    tar -xvzf $pkg
+    wait
+    rm $pkg
+    highlight 'Done.' 'g' 'miner'
+    # create executable &
+    # add alias for cli
+    touch "$installPath/$name.sh"
+
+
+cat > $installPath/$name.sh <<EOF
+#!/bin/bash
+function highlight () {
+    if [ $2 == 'r' ];then
+        col="\033[1;31m"
+    elif [ $2 == 'y' ]; then
+        col="\033[1;33m"
+    elif [ $2 == 'g' ]; then
+        col="\033[1;32m"
+    elif [ $2 == 'w' ]; then
+        col="\033[1;37m"
+    else
+        col=$2
+    fi  
+    if [ -z $3 ]; then
+        head=''
+    else
+        head="[$3] "
+    fi
+    printf "$col$head$1\033[1;35m\n"; sleep 1
+}
+cd $HOME
+installPath="$HOME/$name"
+pkg="cpuminer-gr-$version-x86_64_linux.tar.gz"
+minerPath=$installPath/${pkg//".tar.gz"/}
+startPath=$minerPath/cpuminer.sh
+configPath=$minerPath/config.json
 # -- check for uninstall --
 if [ -z "$1" ];then
     echo
@@ -80,29 +126,23 @@ else
         else
             highlight "No $name installation found on this profile - exit." 'r' 'setup'
         fi
+    elif [ "up" == $1 ]; then
+        highlight 'Invoke mining workload ...' '\033[0;33m' 'miner'
+        sudo /bin/bash $startPath
+    elif [ "kill" == $1 ]; then
+        highlight 'Invoke mining workload ...' '\033[0;33m' 'miner'
+        systemctl stop $name.service || kill $(awk -F" "  '{print $2}'  <<<"$(ps -aux | grep cpuminer-)")
+        sudo /bin/bash $startPath
+    elif [ "watchdog" == $1 ]; then
+        highlight 'Invoke watchdog, miner will run in the background.' '\033[1;34m' 'watchdog'
+        sudo /bin/bash $startPath
     else
         highlight "Command '$1' not found." 'r'
     fi
     return
 fi
+EOF
 
-# -- start setup --
-if [ ! -d $installPath ]; then
-    highlight 'Start ...' 'w' 'setup' && 
-    highlight "Setup directory at $installPath ..." 'y' 'setup' &&
-    mkdir $installPath &&
-    cd $installPath
-    sleep 1
-    highlight 'Download miner ...' 'y' 'miner'
-    wget "https://github.com/WyvernTKC/cpuminer-gr-avx2/releases/download/$version/$pkg" &&
-    highlight 'Decompress ...' 'y' 'miner'
-    tar -xvzf $pkg
-    wait
-    rm $pkg
-    highlight 'Done.' 'g' 'miner'
-    # create executable &
-    # add alias for cli
-    touch "$installPath/$name.sh"
     highlight 'set environment variable...' 'y' $name
     echo "alias $name='/bin/bash $installPath/$name.sh'" >> $HOME/.bashrc && source $HOME/.bashrc &&
     highlight 'done.' 'g' $name
@@ -120,6 +160,7 @@ read wallet
 highlight 'Insert a worker name and press enter:' 'y' 'config'
 read worker
 sed -i 's/  "user".*/ "user": "'$wallet'.'$worker'",/' $configPath &&
+highlight 'Done.' 'g' 'config'
 
 # -- service --
 highlight 'Activate the watchdog? This will keep the miner alive and will run in the background even after reboot. No console output. [y/n]' 'y' 'watchdog'
