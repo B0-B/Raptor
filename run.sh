@@ -77,27 +77,29 @@ if [ ! -d $installPath ]; then
     # add alias for cli
     touch "$installPath/$name.sh"
 
-
+one='$1'
+two='$2'
+three='$3'
 cat > $installPath/$name.sh <<EOF
 #!/bin/bash
 function highlight () {
-    if [ $2 == 'r' ];then
+    if [ $one == 'r' ];then
         col="\033[1;31m"
-    elif [ $2 == 'y' ]; then
+    elif [ $two == 'y' ]; then
         col="\033[1;33m"
-    elif [ $2 == 'g' ]; then
+    elif [ $two == 'g' ]; then
         col="\033[1;32m"
-    elif [ $2 == 'w' ]; then
+    elif [ $two == 'w' ]; then
         col="\033[1;37m"
     else
-        col=$2
+        col=$two
     fi  
-    if [ -z $3 ]; then
+    if [ -z $three ]; then
         head=''
     else
-        head="[$3] "
+        head="[$three] "
     fi
-    printf "$col$head$1\033[1;35m\n"; sleep 1
+    printf "$col$head$one\033[1;35m\n"; sleep 1
 }
 cd $HOME
 installPath="$HOME/$name"
@@ -106,10 +108,10 @@ minerPath=$installPath/${pkg//".tar.gz"/}
 startPath=$minerPath/cpuminer.sh
 configPath=$minerPath/config.json
 # -- check for uninstall --
-if [ -z "$1" ];then
+if [ -z "$one" ];then
     echo
 else
-    if [ "uninstall" == "$1" ]; then
+    if [ "uninstall" == "$one" ]; then
         if [ -d $installPath ]; then
             highlight 'trigger uninstall ...' 'y' 'setup'
             highlight "are you sure to uninstall $name? [y/n]" 'y' 'setup'
@@ -126,18 +128,18 @@ else
         else
             highlight "No $name installation found on this profile - exit." 'r' 'setup'
         fi
-    elif [ "up" == $1 ]; then
+    elif [ "up" == $one ]; then
         highlight 'Invoke mining workload ...' '\033[0;33m' 'miner'
         sudo /bin/bash $startPath
-    elif [ "kill" == $1 ]; then
+    elif [ "kill" == $one ]; then
         highlight 'Invoke mining workload ...' '\033[0;33m' 'miner'
-        systemctl stop $name.service || kill $(awk -F" "  '{print $2}'  <<<"$(ps -aux | grep cpuminer-)")
+        systemctl stop $name.service || kill $(awk -F" "  '{print $two}'  <<<"$(ps -aux | grep cpuminer-)")
         sudo /bin/bash $startPath
-    elif [ "watchdog" == $1 ]; then
+    elif [ "watchdog" == $one ]; then
         highlight 'Invoke watchdog, miner will run in the background.' '\033[1;34m' 'watchdog'
         sudo /bin/bash $startPath
     else
-        highlight "Command '$1' not found." 'r'
+        highlight "Command '$one' not found." 'r'
     fi
     return
 fi
