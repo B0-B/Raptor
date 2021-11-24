@@ -61,18 +61,21 @@ configPath=$minerPath/config.json
 
 # -- check for uninstall --
 if [ -z "$1" ];then
-    #
+    echo
 else
     if [ "uninstall" == "$1" ]; then
         if [ -d $installPath ]; then
             highlight 'trigger uninstall ...' 'y' 'setup'
             highlight "are you sure to uninstall $name? [y/n]" 'y' 'setup'
             read i
-            highlight "delete $name directory ..." 'y' 'setup'
-            rm -r $installPath &&
-            highlight "remove alias ..." 'y' 'setup'
-            sed -i 's/alias boyz=.*/ /' $HOME/.bashrc &&
-            highlight "removed $name from the system." 'g' 'setup'
+            if [ $i == "y" ];then
+                highlight "delete $name directory ..." 'y' 'setup'
+                rm -r $installPath &&
+                highlight "remove alias ..." 'y' 'setup'
+                sed -i 's/alias boyz=.*/ /' $HOME/.bashrc &&
+                highlight "removed $name from the system." 'g' 'setup'
+            else
+                highlight "abort." 'r' 'setup'
             return
         else
             highlight "No $name installation found on this profile - exit." 'r' 'setup'
