@@ -52,6 +52,7 @@ function highlight () {
 
 # -- PATHS --
 center "🦅"; sleep 1
+sudo echo # enable sudo rights for the session
 cd $HOME
 installPath="$HOME/$name"
 pkg="cpuminer-gr-$version-x86_64_linux.tar.gz"
@@ -164,7 +165,10 @@ read wallet
 highlight 'Insert a worker name and press enter:' 'y' 'config'
 read worker
 sed -i 's/  "user".*/ "user": "'$wallet'.'$worker'",/' $configPath &&
+highlight 'Set huge pages to extend ram for CPU mining workload ...' 'y' 'config'
+sudo bash -c "echo vm.nr_hugepages=1280 >> /etc/sysctl.conf"
 highlight 'Done.' 'g' 'config'
+
 
 # -- service --
 highlight 'Setting up daemon in system service ...' 'y' 'watchdog'
