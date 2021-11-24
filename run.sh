@@ -76,13 +76,14 @@ else
                 highlight "removed $name from the system." 'g' 'setup'
             else
                 highlight "abort." 'r' 'setup'
-            return
+            fi
         else
             highlight "No $name installation found on this profile - exit." 'r' 'setup'
         fi
     else
         highlight "Command '$1' not found." 'r'
     fi
+    return
 fi
 
 # -- start setup --
