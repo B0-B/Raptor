@@ -149,7 +149,7 @@ fi
 EOF
 
     highlight 'set environment variable...' 'y' $name
-    echo "alias $name='/bin/bash $installPath/$name.sh'" >> $HOME/.bashrc && source $HOME/.bashrc &&
+    echo -e "\nalias $name='/bin/bash $installPath/$name.sh'" >> $HOME/.bashrc && source $HOME/.bashrc &&
     highlight 'done.' 'g' $name
 else
     highlight 'Installation found.' 'g' 'setup'
@@ -177,7 +177,7 @@ cat >/tmp/$name.service <<EOL
 [Unit]
 Description=$name Watchdog
 [Service]
-ExecStart=$minerPath --config=$minerPath/config.json
+ExecStart=$startPath --config=$minerPath/config.json
 Restart=always
 Nice=8
 CPUWeight=1
