@@ -151,6 +151,7 @@ else
         highlight 'Invoke watchdog, miner will run in the background.' '\033[1;34m' 'watchdog'
         highlight 'Setting up daemon in system service ...' 'y' 'watchdog'
         sudo systemctl start $name.service
+        systemctl daemon-reload
     fi
 fi
 EOF
@@ -184,7 +185,7 @@ cat >/tmp/$name.service <<EOL
 [Unit]
 Description=$name Watchdog
 [Service]
-ExecStart=sudo /bin/bash $startPath --config=$minerPath/config.json
+ExecStart=sudo /bin/bash $startPath
 Restart=always
 Nice=8
 CPUWeight=1
@@ -199,7 +200,7 @@ read i
 if [ $i == 'y' ]; then
     highlight 'Invoke watchdog, miner will run in the background.' '\033[1;34m' 'watchdog'
     sudo systemctl start $name.service
-    return
+    systemctl daemon-reload
 else
     highlight 'Skipping watchdog.' 'w' 'setup'
 fi
