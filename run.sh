@@ -82,6 +82,7 @@ one='$1'
 two='$2'
 three='$3'
 I='$i'
+colhead='$col$head'
 killString='kill $(awk -F" "  "{print $two}"  <<<"$(ps -aux | grep cpuminer-)") || highlight "no mining process found, check for watchdog..." "y" $name && sudo systemctl stop $name.service'
 cat > $installPath/$name.sh <<EOF
 #!/bin/bash
@@ -102,7 +103,7 @@ function highlight () {
     else
         head="[$three] "
     fi
-    printf "$col$head$one\033[1;35m\n"; sleep 1
+    printf "$colhead$one\033[1;35m\n"; sleep 1
 }
 cd $HOME
 installPath="$HOME/$name"
