@@ -77,7 +77,8 @@ if [ ! -d $installPath ]; then
     
     # -- dependencies --
     highlight 'Install dependencies ...' 'y' 'dependencies'
-    sudo apt install curl -y
+    sudo apt install curl -y &&
+    sudo apt install -y cpulimit
     wait
     highlight 'Done.' 'g' 'dependencies'
     
@@ -85,11 +86,39 @@ if [ ! -d $installPath ]; then
     # add alias for cli --
     touch "$installPath/$name.sh"
 
-# fill executable with CLI interpreter
+# shuffler
+highlight 'Create shuffle.sh...' 'y' $name
 one='$1'
 two='$2'
 three='$3'
 I='$i'
+cat > $installPath/shuffle.sh <<EOF
+#!/bin/bash
+function limit() {
+    threads=$(grep -c ^processor /proc/cpuinfo)
+    if [ "$(systemctl is-active $name.service)" == "active" ]; then
+        prcStr=$(ps -aux | grep cpuminer-zen)
+        PID=(${prcStr//root / })
+        sudo setsid -f cpulimit -p $PID -l $(($threads*$1)) > /dev/null 2>&1
+    else
+        sudo setsid -f cpulimit -e $name -l $(($threads*$1)) > /dev/null 2>&1
+    fi
+}
+function shuffle() {
+    sudo echo
+    while true 
+    do
+        limit $(shuf -i20-95 -n1)
+        sleep $(shuf -i5-10 -n1)
+        sudo pkill cpulimit;
+        wait
+    done
+}
+sudo echo
+shuffle&
+EOF
+
+# fill executable with CLI interpreter
 colhead='$col$head'
 killString='kill $(awk -F" "  "{print $two}"  <<<"$(ps -aux | grep cpuminer-)") || highlight "no mining process found, check for watchdog..." "y" $name && sudo systemctl stop $name.service'
 cat > $installPath/$name.sh <<EOF
@@ -113,12 +142,19 @@ function highlight () {
     fi
     printf "$colhead$one\033[1;35m\n"; sleep 1
 }
+function stopshuffle() {
+    prcStr=$(ps -aux | grep shuffle)
+    PID=(${prcStr//"$(whoami)" / })
+    kill $PID
+    sudo pkill cpulimit 
+}
 cd $HOME
 installPath="$HOME/$name"
 pkg="cpuminer-gr-$version-x86_64_linux.tar.gz"
 minerPath=$installPath/${pkg//".tar.gz"/}
 startPath=$minerPath/cpuminer.sh
 configPath=$minerPath/config.json
+shuffleIsActive=false
 # -- check for uninstall --
 if [ -z "$one" ];then
     echo
@@ -147,6 +183,13 @@ else
         highlight 'kill miner ...' '\033[0;33m' $name
         sudo systemctl stop $name.service
         sudo pkill cpuminer
+    elif [ "shuffle" == $one ]; then
+        if $shuffleIsActive; then
+            highlight 'stopping shuffle service.' 'r' shuffle
+        else
+            highlight 'start service. Run the command again to stop the CPU throttling.' '\033[0;35m' shuffle
+            bash shuffle.sh
+        fi
     elif [ "watchdog" == $one ]; then
         highlight 'Invoke watchdog, miner will run in the background.' '\033[1;34m' 'watchdog'
         highlight 'Setting up daemon in system service ...' 'y' 'watchdog'
