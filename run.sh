@@ -2,8 +2,7 @@
 # Raptoreum setup and deploy script with CLI.
 ###################### HEAD ########################
 name="TheBoyz"
-version="1.2.4.1" 
-usr=$(whoami)
+version="1.2.4.1" # cpuminer version
 ####################################################
 
 function center() {
@@ -209,7 +208,11 @@ else
         sudo systemctl stop $name.service
         sudo pkill cpuminer
     elif [ "shuffle" == $one ]; then
-        highlight 'start service. Run the command again to stop the CPU throttling.' '\033[0;35m' 'shuffle'
+        if [ $two == 'kill' ]; then
+            highlight 'kill service ...' 'y' 'shuffle'
+        else
+            highlight "start service... Run '$name shuffle kill' to stop the CPU throttling." '\033[0;35m' 'shuffle'
+        fi
         bash $installPath/shuffle.sh $two $three
     elif [ "watchdog" == $one ]; then
         highlight 'Invoke watchdog, miner will run in the background.' '\033[1;34m' 'watchdog'
