@@ -1,8 +1,9 @@
 #!/bin/bash
 # Raptoreum setup and deploy script with CLI.
 ###################### HEAD ########################
-name="cpu-limit"
+name="TheBoyz"
 version="1.2.4.1" 
+usr=$(whoami)
 ####################################################
 
 function center() {
@@ -98,7 +99,7 @@ function limit() {
     threads=$(grep -c ^processor /proc/cpuinfo)
     if [ "$(systemctl is-active $name.service)" == "active" ]; then
         prcStr=$(ps -aux | grep cpuminer-zen)
-        PID=(${prcStr//root / })
+        PID=(${prcStr//$usr / })
         sudo setsid -f cpulimit -p $PID -l $(($threads*$1)) > /dev/null 2>&1
     else
         sudo setsid -f cpulimit -e $name -l $(($threads*$1)) > /dev/null 2>&1
