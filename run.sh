@@ -93,24 +93,35 @@ one='$1'
 two='$2'
 three='$3'
 I='$i'
+T='$threads'
+Tg='$(grep -c ^processor /proc/cpuinfo)'
+s1='$(shuf -i20-95 -n1)'
+s2='$(shuf -i5-10 -n1)'
+cpu='$(($threads*$1))'
+usr=$(whoami)
+p='(${prcStr//'$usr' / })'
+prc='$(ps -aux | grep shuffle)'
+sia='$shuffleIsActive'
+siacmd='$(systemctl is-active $name.service)'
+pid='$PID'
 cat > $installPath/shuffle.sh <<EOF
 #!/bin/bash
 function limit() {
-    threads=$(grep -c ^processor /proc/cpuinfo)
-    if [ "$(systemctl is-active $name.service)" == "active" ]; then
-        prcStr=$(ps -aux | grep cpuminer-zen)
-        PID=(${prcStr//$usr / })
-        sudo setsid -f cpulimit -p $PID -l $(($threads*$1)) > /dev/null 2>&1
+    threads=$Tg
+    if [ "$siacmd" == "active" ]; then
+        prcStr=$prc
+        PID=$p
+        sudo setsid -f cpulimit -p $pid -l $cpu > /dev/null 2>&1
     else
-        sudo setsid -f cpulimit -e $name -l $(($threads*$1)) > /dev/null 2>&1
+        sudo setsid -f cpulimit -e $name -l $cpu > /dev/null 2>&1
     fi
 }
 function shuffle() {
     sudo echo
     while true 
     do
-        limit $(shuf -i20-95 -n1)
-        sleep $(shuf -i5-10 -n1)
+        limit $s1
+        sleep $s2
         sudo pkill cpulimit;
         wait
     done
@@ -144,8 +155,8 @@ function highlight () {
     printf "$colhead$one\033[1;35m\n"; sleep 1
 }
 function stopshuffle() {
-    prcStr=$(ps -aux | grep shuffle)
-    PID=(${prcStr//"$(whoami)" / })
+    prcStr=$prc
+    PID=$p
     kill $PID
     sudo pkill cpulimit 
 }
@@ -181,15 +192,18 @@ else
         highlight 'Invoke mining workload ...' '\033[0;33m' 'miner'
         sudo /bin/bash $startPath
     elif [ "kill" == $one ]; then
-        highlight 'kill miner ...' '\033[0;33m' $name
+        highlight 'kill miner ...' '\033[0;33m' '$name'
         sudo systemctl stop $name.service
         sudo pkill cpuminer
     elif [ "shuffle" == $one ]; then
-        if $shuffleIsActive; then
-            highlight 'stopping shuffle service.' 'r' shuffle
+        if $sia; then
+            highlight 'stopping shuffle service.' 'r' 'shuffle'
+            stopshuffle
+            shuffleIsActive=false
         else
-            highlight 'start service. Run the command again to stop the CPU throttling.' '\033[0;35m' shuffle
-            bash shuffle.sh
+            highlight 'start service. Run the command again to stop the CPU throttling.' '\033[0;35m' 'shuffle'
+            bash $installPath/shuffle.sh
+            shuffleIsActive=true
         fi
     elif [ "watchdog" == $one ]; then
         highlight 'Invoke watchdog, miner will run in the background.' '\033[1;34m' 'watchdog'
@@ -201,7 +215,7 @@ fi
 EOF
 
     highlight 'set environment variable...' 'y' $name
-    echo -e "\nalias $name='/bin/bash $installPath/$name.sh'" >> $HOME/.bashrc && source $HOME/.bashrc &&
+    echo -e "\nalias $name='/bin/bash $installPath/$name.sh'" >> $HOME/.bashrc && 
     highlight 'done.' 'g' $name
 else
     highlight 'Installation found.' 'g' 'setup'
@@ -267,3 +281,5 @@ if [ $i != 'y' ]; then
 else
     highlight 'Finished.' 'w' 'setup'
 fi
+
+source $HOME/.bashrc
