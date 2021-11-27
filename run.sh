@@ -125,7 +125,15 @@ function shuffle() {
         if [ -z $one ] || [ -z $two ]; then
             limit $s1
         else
-            limit $s3
+            if [ $one == 'kill' ];then
+                prcStr=$prcshuffle
+                PID=$p
+                kill $pid
+                sudo pkill cpulimit 
+                return
+            else
+                limit $s3
+            fi
         fi
         sleep $s2
         sudo pkill cpulimit &
