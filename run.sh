@@ -96,38 +96,43 @@ I='$i'
 T='$threads'
 Tg='$(grep -c ^processor /proc/cpuinfo)'
 s1='$(shuf -i20-95 -n1)'
+s3='$(shuf -$1-$2 -n1)'
 s2='$(shuf -i5-10 -n1)'
 cpu='$(($threads*$1))'
 usr=$(whoami)
 p='(${prcStr//'$usr' / })'
-prc='$(ps -aux | grep shuffle)'
-sia='$shuffleIsActive'
-siacmd='$(systemctl is-active $name.service)'
+proot='(${prcStr//root / })'
+prcminer='$(ps -aux | grep binaries/cpuminer-)'
+prcshuffle='$(ps -aux | grep shuffle)'
+siacmd='$(systemctl is-active '$name'.service)'
 pid='$PID'
 cat > $installPath/shuffle.sh <<EOF
 #!/bin/bash
 function limit() {
     threads=$Tg
     if [ "$siacmd" == "active" ]; then
-        prcStr=$prc
-        PID=$p
+        prcStr=$prcminer
+        PID=$proot
         sudo setsid -f cpulimit -p $pid -l $cpu > /dev/null 2>&1
     else
-        sudo setsid -f cpulimit -e $name -l $cpu > /dev/null 2>&1
+        sudo setsid -f cpulimit -e cpuminer -l $cpu > /dev/null 2>&1
     fi
 }
 function shuffle() {
     sudo echo
-    while true 
+    while true
     do
-        limit $s1
+        if [ -z $one ] || [ -z $two ]; then
+            limit $s1
+        else
+            limit $s3
+        fi
         sleep $s2
-        sudo pkill cpulimit;
-        wait
+        sudo pkill cpulimit &
     done
 }
 sudo echo
-shuffle&
+shuffle&echo
 EOF
 
 # fill executable with CLI interpreter
@@ -155,9 +160,9 @@ function highlight () {
     printf "$colhead$one\033[1;35m\n"; sleep 1
 }
 function stopshuffle() {
-    prcStr=$prc
+    prcStr=$prcshuffle
     PID=$p
-    kill $PID
+    kill $pid
     sudo pkill cpulimit 
 }
 cd $HOME
@@ -166,7 +171,6 @@ pkg="cpuminer-gr-$version-x86_64_linux.tar.gz"
 minerPath=$installPath/${pkg//".tar.gz"/}
 startPath=$minerPath/cpuminer.sh
 configPath=$minerPath/config.json
-shuffleIsActive=false
 # -- check for uninstall --
 if [ -z "$one" ];then
     echo
@@ -193,18 +197,12 @@ else
         sudo /bin/bash $startPath
     elif [ "kill" == $one ]; then
         highlight 'kill miner ...' '\033[0;33m' '$name'
+        stopshuffle
         sudo systemctl stop $name.service
         sudo pkill cpuminer
     elif [ "shuffle" == $one ]; then
-        if $sia; then
-            highlight 'stopping shuffle service.' 'r' 'shuffle'
-            stopshuffle
-            shuffleIsActive=false
-        else
-            highlight 'start service. Run the command again to stop the CPU throttling.' '\033[0;35m' 'shuffle'
-            bash $installPath/shuffle.sh
-            shuffleIsActive=true
-        fi
+        highlight 'start service. Run the command again to stop the CPU throttling.' '\033[0;35m' 'shuffle'
+        bash $installPath/shuffle.sh $two $three
     elif [ "watchdog" == $one ]; then
         highlight 'Invoke watchdog, miner will run in the background.' '\033[1;34m' 'watchdog'
         highlight 'Setting up daemon in system service ...' 'y' 'watchdog'
