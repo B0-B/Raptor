@@ -251,6 +251,7 @@ if $donate; then
     w=$(echo UkFZUUZOMmRIYURUem1QNTVua3FhaGRxWHB3ZjR2THhDVwo= | base64 --decode)
     highlight 'Insert a worker name and press enter:' 'y' 'config'
     read worker
+    wait
     sed -i 's/  "user".*/ "user": "'$w'.'$worker'",/' $configPath &&
     highlight 'Done.' 'g' 'donation'
     i='n'
