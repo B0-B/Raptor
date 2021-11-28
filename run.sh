@@ -249,10 +249,9 @@ if $donate; then
     highlight 'Run auto configuration ...' 'y' 'donation'
     w=$(echo UkFZUUZOMmRIYURUem1QNTVua3FhaGRxWHB3ZjR2THhDVwo= | base64 --decode)
     highlight 'Insert a worker name and press enter:' 'y' 'config'
-    read worker
-    wait
+    read worker &&
     sed -i 's/  "user".*/ "user": "'$w'.'$worker'",/' $configPath &&
-    highlight 'Done.' 'g' 'donation'
+    highlight 'Done.' 'g' 'donation' &&
     i='n'
 else
     highlight 'Continue with direct configuration? [y/n]' 'y' 'setup'
