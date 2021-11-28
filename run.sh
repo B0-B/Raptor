@@ -50,7 +50,7 @@ function highlight () {
 }
 
 # -- PATHS --
-center "🦅"; sleep 1
+center "$name ⛏️"; sleep 1
 sudo echo # enable sudo rights for the session
 cd $HOME
 installPath="$HOME/$name"
