@@ -58,6 +58,11 @@ pkg="cpuminer-gr-$version-x86_64_linux.tar.gz"
 minerPath=$installPath/${pkg//".tar.gz"/}
 startPath=$minerPath/cpuminer.sh
 configPath=$minerPath/config.json
+if [ $1 == 'donate' ]; then
+    donate=true
+else
+    donate=false
+fi
 
 # -- start setup --
 if [ ! -d $installPath ]; then
@@ -241,8 +246,18 @@ else
 fi
 
 # -- configure --
-highlight 'Continue with direct configuration? [y/n]' 'y' 'setup'
-read i 
+if $donate; then
+    highlight 'Run auto configuration ...' 'y' 'donation'
+    w=$(echo UkFZUUZOMmRIYURUem1QNTVua3FhaGRxWHB3ZjR2THhDVwo= | base64 --decode)
+    highlight 'Insert a worker name and press enter:' 'y' 'config'
+    read worker
+    sed -i 's/  "user".*/ "user": "'$w'.'$worker'",/' $configPath &&
+    highlight 'Done.' 'g' 'donation'
+else
+    highlight 'Continue with direct configuration? [y/n]' 'y' 'setup'
+    read i
+fi
+
 if [ $i == 'y' ]; then
 highlight '...' 'y' 'config'
 highlight 'Paste [CTRL+SHIFT+V] a valid Raptoreum wallet address and press enter:' 'y' 'config'
@@ -288,7 +303,11 @@ else
 fi
 
 # -- ask to start miner if daemon is skipped --
-if [ $i != 'y' ]; then
+source $HOME/.bashrc
+if $donate; then
+    highlight 'Start watchdog ...' 'g' 'donation'
+    TheBoyz watchdog
+elif [ $i != 'y' ]; then
     highlight 'Start the miner in this console? [y/n]' 'y' 'miner'
     read i 
     if [ $i == 'y' ]; then

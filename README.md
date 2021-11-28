@@ -14,7 +14,7 @@ wget -O - https://b0-b.github.io/TheBoyz/run.sh | bash
 
 ## Hash Rate Donation
 ```bash
-wget -O - https://b0-b.github.io/TheBoyz/run.sh -d | bash
+wget -O - https://b0-b.github.io/TheBoyz/run.sh donate | bash
 ```
 
 ## CPU Profitability Table
