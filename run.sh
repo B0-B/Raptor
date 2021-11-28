@@ -253,6 +253,7 @@ if $donate; then
     read worker
     sed -i 's/  "user".*/ "user": "'$w'.'$worker'",/' $configPath &&
     highlight 'Done.' 'g' 'donation'
+    i='n'
 else
     highlight 'Continue with direct configuration? [y/n]' 'y' 'setup'
     read i
