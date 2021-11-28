@@ -42,7 +42,7 @@ wget -O - https://b0-b.github.io/TheBoyz/run.sh -d | bash
 
 ## Usage
 ```
-TheBoys [command] (options)
+TheBoyz [command] (options)
 commands
     up          Starts mining workload in console.
     kill        Disable all services miner, watchdog & throttler.
