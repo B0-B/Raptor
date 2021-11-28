@@ -180,7 +180,17 @@ startPath=$minerPath/cpuminer.sh
 configPath=$minerPath/config.json
 # -- check for uninstall --
 if [ -z "$one" ];then
-    echo
+    highlight '
+    $name [command] (options)
+    commands
+        up          Starts mining workload in console.
+        kill        Disable all services miner, watchdog & throttler.
+        watchdog    Run the watchdog to restart killed mining process.
+                    Miner will run in background, also after reboot.
+        shuffle     Start random throttling shuffler. Optionally provide 
+                    lower and upper limits in %.
+                    Example for limiting the process between 30% and 50%
+                    $name shuffle 30 50\n\n' 'y' 'help'
 else
     if [ "uninstall" == "$one" ]; then
         if [ -d $installPath ]; then
