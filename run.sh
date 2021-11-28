@@ -194,7 +194,8 @@ if [ -z "$one" ];then
                     Miner will run in background, also after reboot.
         shuffle     Start random throttling shuffler.
                     Optionally provide lower and upper limits in percent.
-                    To stop use "stop" option.'  'y' 'help'
+                    To stop use "stop" option.
+        uninstall   Uninstall $name'  'y' 'help'
 else
     if [ "uninstall" == "$one" ]; then
         if [ -d $installPath ]; then
@@ -205,7 +206,7 @@ else
                 highlight "delete $name directory ..." 'y' 'setup'
                 rm -r $installPath &&
                 highlight "remove alias ..." 'y' 'setup'
-                sed -i 's/alias boyz=.*/ /' $HOME/.bashrc &&
+                sed -i 's/alias $name=.*//' $HOME/.bashrc &&
                 highlight "removed $name from the system." 'g' 'setup'
             else
                 highlight "abort." 'r' 'setup'
