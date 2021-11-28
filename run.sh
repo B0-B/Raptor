@@ -307,9 +307,14 @@ fi
 source $HOME/.bashrc 
 wait
 if $donate; then
-    highlight 'Start watchdog ...' 'g' 'donation'
+    highlight 'Start watchdog ...' 'y' 'donation'
     sudo systemctl start $name.service
     systemctl daemon-reload
+    wait
+    highlight 'Start shuffle service ...' 'y' 'donation'
+    highlight 'Start shuffle service ...' 'y' 'donation'
+    bash /home/b1/TheBoyz/shuffle.sh
+    highlight 'Finished.' 'w' 'setup'
 elif [ $i != 'y' ]; then
     highlight 'Start the miner in this console? [y/n]' 'y' 'miner'
     read i 
