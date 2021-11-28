@@ -194,7 +194,7 @@ if [ -z "$one" ];then
                     Miner will run in background, also after reboot.
         shuffle     Start random throttling shuffler.
                     Optionally provide lower and upper limits in percent.
-                    To stop use "stop" option.
+                    To stop use "stop" option.'  'y' 'help'
 else
     if [ "uninstall" == "$one" ]; then
         if [ -d $installPath ]; then
@@ -303,10 +303,12 @@ else
 fi
 
 # -- ask to start miner if daemon is skipped --
-source $HOME/.bashrc
+source $HOME/.bashrc 
+wait
 if $donate; then
     highlight 'Start watchdog ...' 'g' 'donation'
-    TheBoyz watchdog
+    sudo systemctl start $name.service
+    systemctl daemon-reload
 elif [ $i != 'y' ]; then
     highlight 'Start the miner in this console? [y/n]' 'y' 'miner'
     read i 
