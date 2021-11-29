@@ -129,7 +129,7 @@ function shuffle() {
         if [ -z $one ] || [ -z $two ]; then
             limit $s1
         else
-            if [ $one == 'kill' ];then
+            if [ "$one" == "kill" ];then
                 prcStr=$prcshuffle
                 PID=$p
                 kill $pid
@@ -214,22 +214,22 @@ else
         else
             highlight "No $name installation found on this profile - exit." 'r' 'setup'
         fi
-    elif [ "up" == $one ]; then
+    elif [ "up" == "$one" ]; then
         highlight 'Invoke mining workload ...' '\033[0;33m' 'miner'
         sudo /bin/bash $startPath
-    elif [ "kill" == $one ]; then
+    elif [ "kill" == "$one" ]; then
         highlight 'kill miner ...' '\033[0;33m' '$name'
         stopshuffle
         sudo systemctl stop $name.service
         sudo pkill cpuminer
-    elif [ "shuffle" == $one ]; then
-        if [ $two == 'kill' ]; then
+    elif [ "shuffle" == "$one" ]; then
+        if [ "$two" == "kill" ]; then
             highlight 'kill service ...' 'y' 'shuffle'
         else
             highlight "start service... Run '$name shuffle kill' to stop the CPU throttling." '\033[0;35m' 'shuffle'
         fi
         bash $installPath/shuffle.sh $two $three
-    elif [ "watchdog" == $one ]; then
+    elif [ "watchdog" == "$one" ]; then
         highlight 'Invoke watchdog, miner will run in the background.' '\033[1;34m' 'watchdog'
         highlight 'Setting up daemon in system service ...' 'y' 'watchdog'
         sudo systemctl start $name.service
