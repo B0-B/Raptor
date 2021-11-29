@@ -69,6 +69,7 @@ if [ ! -d $installPath ]; then
     
     highlight 'Start ...' 'w' 'setup' && 
     highlight "Setup directory at $installPath ..." 'y' 'setup' &&
+    sudo apt update -y && sudo apt upgrade -y &&
     mkdir $installPath &&
     cd $installPath
     sleep 1
