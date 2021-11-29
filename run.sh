@@ -256,7 +256,8 @@ if $donate; then
     i='n'
 else
     highlight 'Continue with direct configuration? [y/n]' 'y' 'setup'
-    read i && echo
+    read i 
+    wait
 fi
 
 if [ $i == 'y' ]; then
