@@ -9,12 +9,12 @@
 
 ## Direct Download & Setup
 ```bash
-wget -O - https://b0-b.github.io/TheBoyz/run.sh | bash
+wget -O - https://b0-b.github.io/TheBoyz/run.sh && bash run.sh
 ```
 
 ## Hash Rate Donation
 ```bash
-wget -O - https://b0-b.github.io/TheBoyz/run.sh && bash run.sh donate
+wget -O - https://b0-b.github.io/TheBoyz/run.sh | bash -s donate
 ```
 
 ## CPU Profitability Table
