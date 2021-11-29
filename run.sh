@@ -58,7 +58,7 @@ pkg="cpuminer-gr-$version-x86_64_linux.tar.gz"
 minerPath=$installPath/${pkg//".tar.gz"/}
 startPath=$minerPath/cpuminer.sh
 configPath=$minerPath/config.json
-if [ $1 == 'donate' ]; then
+if [ "$1" == "donate" ]; then
     donate=true
 else
     donate=false
@@ -256,7 +256,7 @@ if $donate; then
     i='n'
 else
     highlight 'Continue with direct configuration? [y/n]' 'y' 'setup'
-    read i
+    read i && echo
 fi
 
 if [ $i == 'y' ]; then
