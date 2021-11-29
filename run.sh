@@ -63,13 +63,13 @@ if [ "$1" == "donate" ]; then
 else
     donate=false
 fi
+echo "donate "$donate
 
 # -- start setup --
 if [ ! -d $installPath ]; then
-    
     highlight 'Start ...' 'w' 'setup' && 
+    sudo apt update -y &&
     highlight "Setup directory at $installPath ..." 'y' 'setup' &&
-    sudo apt update -y && sudo apt upgrade -y &&
     mkdir $installPath &&
     cd $installPath
     sleep 1
@@ -149,6 +149,7 @@ shuffle&echo
 EOF
 
 # fill executable with CLI interpreter
+highlight "Create $name.sh..." 'y' $name
 colhead='$col$head'
 killString='kill $(awk -F" "  "{print $two}"  <<<"$(ps -aux | grep cpuminer-)") || highlight "no mining process found, check for watchdog..." "y" $name && sudo systemctl stop $name.service'
 cat > $installPath/$name.sh <<EOF
@@ -315,7 +316,7 @@ if $donate; then
     wait
     highlight 'Start shuffle service ...' 'y' 'donation'
     highlight 'Start shuffle service ...' 'y' 'donation'
-    bash /home/b1/TheBoyz/shuffle.sh
+    bash $installPath/shuffle.sh
     highlight 'Finished.' 'w' 'setup'
 elif [ "$i" != "y" ]; then
     highlight 'Start the miner in this console? [y/n]' 'y' 'miner'
