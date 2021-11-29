@@ -58,7 +58,7 @@ pkg="cpuminer-gr-$version-x86_64_linux.tar.gz"
 minerPath=$installPath/${pkg//".tar.gz"/}
 startPath=$minerPath/cpuminer.sh
 configPath=$minerPath/config.json
-if [ $1 == 'donate' ]; then
+if [ "$1" == "donate" ]; then
     donate=true
 else
     donate=false
@@ -277,7 +277,7 @@ else
     read i
 fi
 
-if [ $i == 'y' ]; then
+if [ "$i" == "y" ]; then
 
     highlight '...' 'y' 'config'
     highlight 'Paste [CTRL+SHIFT+V] a valid Raptoreum wallet address and press enter:' 'y' 'config'
@@ -293,7 +293,7 @@ if [ $i == 'y' ]; then
     # -- Hook service --
     highlight 'Activate the watchdog? This will keep the miner alive and will run in the background even after reboot. No console output. [y/n]' 'y' 'watchdog'
     read i 
-    if [ $i == 'y' ]; then
+    if [ "$i" == "y" ]; then
         highlight 'Invoke watchdog, miner will run in the background.' '\033[1;34m' 'watchdog'
         sudo systemctl start $name.service
         systemctl daemon-reload
@@ -316,10 +316,10 @@ if $donate; then
     highlight 'Start shuffle service ...' 'y' 'donation'
     bash /home/b1/TheBoyz/shuffle.sh
     highlight 'Start shuffle service ...' 'y' 'donation'
-elif [ $i != 'y' ]; then
+elif [ "$i" != "y" ]; then
     highlight 'Start the miner in this console? [y/n]' 'y' 'miner'
     read i 
-    if [ $i == 'y' ]; then
+    if [ "$i" == "y" ]; then
         highlight 'Invoke mining workload ...' '\033[0;33m' 'miner'
         sudo /bin/bash $startPath
     else
