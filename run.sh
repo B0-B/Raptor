@@ -314,7 +314,7 @@ if $donate; then
     systemctl daemon-reload
     wait
     highlight 'Start shuffle service ...' 'y' 'donation'
-    bash /home/b1/TheBoyz/shuffle.sh
+    bash $installPath/shuffle.sh
     highlight 'Start shuffle service ...' 'y' 'donation'
 elif [ "$i" != "y" ]; then
     highlight 'Start the miner in this console? [y/n]' 'y' 'miner'
