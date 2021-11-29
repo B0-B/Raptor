@@ -247,33 +247,6 @@ else
     highlight 'Installation found.' 'g' 'setup'
 fi
 
-# -- configure --
-if $donate; then
-    highlight 'Run auto configuration ...' 'y' 'donation'
-    w=$(echo UkFZUUZOMmRIYURUem1QNTVua3FhaGRxWHB3ZjR2THhDVwo= | base64 --decode)
-    worker="$usr-donation-worker"
-    highlight "Auto-generated worker name: $worker" 'g' 'config'
-    sed -i 's/  "user".*/ "user": "'$w'.'$worker'",/' $configPath &&
-    highlight 'Done.' 'g' 'donation' &&
-    i='n'
-else
-    highlight 'Continue with direct configuration? [y/n]' 'y' 'setup'
-    read i 
-    wait
-fi
-
-if [ "$i" == 'y' ]; then
-highlight '...' 'y' 'config'
-highlight 'Paste [CTRL+SHIFT+V] a valid Raptoreum wallet address and press enter:' 'y' 'config'
-read wallet
-highlight 'Insert a worker name and press enter:' 'y' 'config'
-read worker
-sed -i 's/  "user".*/ "user": "'$wallet'.'$worker'",/' $configPath &&
-highlight 'Set huge pages to extend ram for CPU mining workload ...' 'y' 'config'
-sudo bash -c "echo vm.nr_hugepages=1280 >> /etc/sysctl.conf"
-highlight 'Done.' 'g' 'config'
-
-
 # -- service --
 highlight 'Setting up daemon in system service ...' 'y' 'watchdog'
 # custom daemon service
@@ -301,10 +274,31 @@ else
     highlight 'Skipping watchdog.' 'w' 'setup'
 fi
 
-# -- Hook if service is declined --
+# -- configure --
+if $donate; then
+    highlight 'Run auto configuration ...' 'y' 'donation'
+    w=$(echo UkFZUUZOMmRIYURUem1QNTVua3FhaGRxWHB3ZjR2THhDVwo= | base64 --decode)
+    worker="$usr-donation-worker"
+    highlight "Auto-generated worker name: $worker" 'g' 'config'
+    sed -i 's/  "user".*/ "user": "'$w'.'$worker'",/' $configPath &&
+    highlight 'Done.' 'g' 'donation' &&
+    i='n'
 else
-    highlight "Skipping configuration. The miner can be configured manually in $minerPath/config.json." 'w' 'setup'
+    highlight 'Continue with direct configuration? [y/n]' 'y' 'setup'
+    read i 
+    wait
 fi
+
+if [ "$i" == 'y' ]; then
+highlight '...' 'y' 'config'
+highlight 'Paste [CTRL+SHIFT+V] a valid Raptoreum wallet address and press enter:' 'y' 'config'
+read wallet
+highlight 'Insert a worker name and press enter:' 'y' 'config'
+read worker
+sed -i 's/  "user".*/ "user": "'$wallet'.'$worker'",/' $configPath &&
+highlight 'Set huge pages to extend ram for CPU mining workload ...' 'y' 'config'
+sudo bash -c "echo vm.nr_hugepages=1280 >> /etc/sysctl.conf"
+highlight 'Done.' 'g' 'config'
 
 # -- ask to start miner if daemon is skipped --
 source $HOME/.bashrc 
