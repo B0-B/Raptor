@@ -14,7 +14,7 @@
 
 ## Direct Download & Setup [Debian]
 ```bash
-wget -O - https://b0-b.github.io/Raptor/run.sh && bash run.sh
+wget https://b0-b.github.io/Raptor/run.sh && bash run.sh
 ```
 
 <br>
