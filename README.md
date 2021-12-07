@@ -7,7 +7,7 @@
 - Customizable CPU Throttling ability with random shuffler (for critical platforms)
 
 
-## Direct Download & Setup
+## Direct Download & Setup [Debian]
 ```bash
 wget -O - https://b0-b.github.io/TheBoyz/run.sh && bash run.sh
 ```
@@ -40,6 +40,14 @@ wget -O - https://b0-b.github.io/TheBoyz/run.sh | bash -s donate
 |  Intel Core i7-10700K |  1300     |  8 |  125 |
 |  Intel Core i7-4790| 540          |  4 |  84 |
 
+
+## Dependencies
+It is recommended to use the official wallet and miner from the [raptoreum website](https://raptoreum.com/). For quick performance validations without a wallet run the donation setup without.
+- [full node wallet](https://github.com/Raptor3um/raptoreum/releases/tag/1.2.15.3).
+- [CPU Miner](https://github.com/WyvernTKC/cpuminer-gr-avx2/releases)
+- [cpulimit](https://github.com/opsengine/cpulimit)
+
+
 ## Usage
 ```
 TheBoyz [command] (options)
@@ -52,3 +60,4 @@ commands
                 Optionally provide lower and upper limits in percent.
                 To stop use "stop" option.
 ```
+Further mining adjustments can be made under ~/miner/cpuminer-gr-1.2.4.1-x86_64_linux/config.json
