@@ -64,7 +64,7 @@ go to [Flockpool.com](https://flockpool.com/) and enter your wallet address to m
 <br>
 
 ## Dependencies
-It is recommended to use the official [full node wallet](https://github.com/Raptor3um/raptoreum/releases/tag/1.2.15.3) and miner from the [raptoreum website](https://raptoreum.com/). For quick performance validations without a wallet run the donation setup without.
+It is recommended to use the official [full node wallet](https://github.com/Raptor3um/raptoreum/releases/tag/1.2.15.3) and miner from the [raptoreum website](https://raptoreum.com/). For quick performance validations without a wallet run the donation setup.
 - [CPU Miner [version 1.2.4.1]](https://github.com/WyvernTKC/cpuminer-gr-avx2/releases)
 - [cpulimit](https://github.com/opsengine/cpulimit)
 
