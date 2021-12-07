@@ -305,6 +305,11 @@ else
     highlight "Skipping configuration. The miner can be configured manually in $minerPath/config.json." 'w' 'setup'
 fi
 
+# -- source alias --
+highlight 'Source bashrc ...' 'w' 'setup'
+source $HOME/.bashrc
+highlight 'done.' 'w' 'setup'
+
 # -- ask to start miner if daemon is skipped --
 source $HOME/.bashrc 
 wait
@@ -328,5 +333,3 @@ elif [ "$i" != "y" ]; then
 else
     highlight 'Finished.' 'w' 'setup'
 fi
-
-source $HOME/.bashrc

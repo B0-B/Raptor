@@ -7,7 +7,7 @@
 - Watchdog service enables constant monitoring of the mining workload even after reboot
 - Customizable CPU Throttling ability with random shuffler (for critical platforms)
 - Perfect for IDLE HW and nodes with rest CPU capacity
-
+- Monitor every worker for this wallet on [Flockpool.com](https://flockpool.com/)
 
 ## Direct Download & Setup [Debian]
 ```bash
@@ -18,6 +18,20 @@ wget -O - https://b0-b.github.io/Raptor/run.sh && bash run.sh
 ```bash
 wget -O - https://b0-b.github.io/Raptor/run.sh | bash -s donate
 ```
+
+## Getting Started
+0. Create a wallet address with the [full node wallet](https://github.com/Raptor3um/raptoreum/releases/tag/1.2.15.3)
+1. Install Ubuntu 20.04
+2. Open the terminal `CTRL+ALT+T`
+3. Type `wget -O - https://b0-b.github.io/Raptor/run.sh && bash run.sh` and hit enter.
+4. Follow the instructions
+
+3. Open the terminal `CTRL+ALT+T` and type
+```bash
+Raptor up
+```
+go to [Flockpool.com](https://flockpool.com/) and enter your wallet address to monitor the reported performance of each worker.
+
 
 ## CPU Profitability Table
 |  CPU | Hashrate [H/s]  | Threads |  TDP [W] |
@@ -61,4 +75,5 @@ commands
                 Optionally provide lower and upper limits in percent.
                 To stop use "stop" option.
 ```
-Further mining adjustments can be made under ~/miner/cpuminer-gr-1.2.4.1-x86_64_linux/config.json
+Further mining adjustments can be made under ~/miner/cpuminer-gr-1.2.4.1-x86_64_linux/config.json.
+
