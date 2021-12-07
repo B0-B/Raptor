@@ -1,7 +1,7 @@
 #!/bin/bash
 # Raptoreum setup and deploy script with CLI.
 ###################### HEAD ########################
-name="TheBoyz"
+name="Raptor"
 version="1.2.4.1" # cpuminer version
 ####################################################
 

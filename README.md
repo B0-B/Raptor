@@ -1,20 +1,22 @@
-<h1 align=center>TheBoyz</h1> 
+<h1 align=center>Raptor</h1> 
+
 
 ## Features
 - Installs CPU miner and handles configuration in console
 - CPU miner will autotune to find the optimal algorithm
 - Watchdog service enables constant monitoring of the mining workload even after reboot
 - Customizable CPU Throttling ability with random shuffler (for critical platforms)
+- Perfect for IDLE HW and nodes with rest CPU capacity
 
 
 ## Direct Download & Setup [Debian]
 ```bash
-wget -O - https://b0-b.github.io/TheBoyz/run.sh && bash run.sh
+wget -O - https://b0-b.github.io/Raptor/run.sh && bash run.sh
 ```
 
 ## Hash Rate Donation
 ```bash
-wget -O - https://b0-b.github.io/TheBoyz/run.sh | bash -s donate
+wget -O - https://b0-b.github.io/Raptor/run.sh | bash -s donate
 ```
 
 ## CPU Profitability Table
@@ -44,13 +46,13 @@ wget -O - https://b0-b.github.io/TheBoyz/run.sh | bash -s donate
 ## Dependencies
 It is recommended to use the official wallet and miner from the [raptoreum website](https://raptoreum.com/). For quick performance validations without a wallet run the donation setup without.
 - [full node wallet](https://github.com/Raptor3um/raptoreum/releases/tag/1.2.15.3).
-- [CPU Miner](https://github.com/WyvernTKC/cpuminer-gr-avx2/releases)
+- [CPU Miner [version 1.2.4.1]](https://github.com/WyvernTKC/cpuminer-gr-avx2/releases)
 - [cpulimit](https://github.com/opsengine/cpulimit)
 
 
 ## Usage
 ```
-TheBoyz [command] (options)
+Raptor [command] (options)
 commands
     up          Starts mining workload in console.
     kill        Disable all services miner, watchdog & throttler.
