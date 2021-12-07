@@ -44,8 +44,7 @@ wget -O - https://b0-b.github.io/Raptor/run.sh | bash -s donate
 
 
 ## Dependencies
-It is recommended to use the official wallet and miner from the [raptoreum website](https://raptoreum.com/). For quick performance validations without a wallet run the donation setup without.
-- [full node wallet](https://github.com/Raptor3um/raptoreum/releases/tag/1.2.15.3).
+It is recommended to use the official [full node wallet](https://github.com/Raptor3um/raptoreum/releases/tag/1.2.15.3) and miner from the [raptoreum website](https://raptoreum.com/). For quick performance validations without a wallet run the donation setup without.
 - [CPU Miner [version 1.2.4.1]](https://github.com/WyvernTKC/cpuminer-gr-avx2/releases)
 - [cpulimit](https://github.com/opsengine/cpulimit)
 
